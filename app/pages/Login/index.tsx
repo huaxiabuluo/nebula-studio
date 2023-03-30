@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
       <div className={styles.content}>
         <div className={styles.header}>
           <img className={styles.logo} src={nebulaLogo} />
-          <span className={styles.title}>NebulaGraph Studio</span>
+          <span className={styles.title}>CTgraph Studio</span>
         </div>
         <Form className={styles.loginForm} layout="horizontal" {...fomrItemLayout} onFinish={onConfig}>
           <FormItem noStyle>

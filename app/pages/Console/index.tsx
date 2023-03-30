@@ -136,7 +136,7 @@ const Console = (props: IProps) => {
       <div className="studioCenterLayout">
         <div className={styles.consolePanel}>
           <div className={styles.panelHeader}>
-            <span className={styles.title}>Nebula Console</span>
+            <span className={styles.title}>CTgraph Console</span>
             <div className={styles.operations}>
               <div className={styles.spaceSelect}>
                 <Select value={currentSpace || null} placeholder={intl.get('console.selectSpace')} onDropdownVisibleChange={handleGetSpaces} onChange={updateCurrentSpace}>
