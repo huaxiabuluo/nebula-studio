@@ -21,7 +21,7 @@ export interface ModuleItem {
   startLink: string;
   startDisabled?: boolean;
   disabledTip?: string;
-  docLink: string;
+  docLink?: string;
   beta?: boolean;
   withOrder?: boolean;
 }
@@ -418,32 +418,33 @@ function Welcome(props: IProps) {
                 <span className={cls(styles.title, module.beta && styles.beta)}>{module.title}</span>
                 <span className={styles.tip}>{module.tip}</span>
                 <div className={styles.actionWrapper}>
-                  {
-                    module.disabledTip ? (
-                      <Tooltip title={module.disabledTip}>
-                        <Button
-                          className={styles.disabledAction}
-                          disabled={!!module.startDisabled}
-                          type="primary"
-                          onClick={() => history.push(module.startLink)}
-                        >
-                          {intl.get('welcome.quickStart')}
-                        </Button>
-                      </Tooltip>
-                    ) : (
+                  {module.disabledTip ? (
+                    <Tooltip title={module.disabledTip}>
                       <Button
-                        className={styles.action}
+                        className={styles.disabledAction}
                         disabled={!!module.startDisabled}
                         type="primary"
                         onClick={() => history.push(module.startLink)}
                       >
                         {intl.get('welcome.quickStart')}
                       </Button>
-                    )}
+                    </Tooltip>
+                  ) : (
+                    <Button
+                      className={styles.action}
+                      disabled={!!module.startDisabled}
+                      type="primary"
+                      onClick={() => history.push(module.startLink)}
+                    >
+                      {intl.get('welcome.quickStart')}
+                    </Button>
+                  )}
 
-                  <Button className={cls(styles.action, styles.sub)} href={module.docLink} target="_blank">
-                    {intl.get('welcome.quickStartDesc')}
-                  </Button>
+                  {module.docLink && (
+                    <Button className={cls(styles.action, styles.sub)} href={module.docLink} target="_blank">
+                      {intl.get('welcome.quickStartDesc')}
+                    </Button>
+                  )}
                 </div>
                 {module.withOrder && <div className={styles.order}>{idx + 1}</div>}
               </div>
@@ -451,19 +452,21 @@ function Welcome(props: IProps) {
           ))}
         </Row>
       </div>
-      <div className={styles.docBox}>
-        <div className={styles.header}>{intl.get('welcome.demos')}</div>
-        <Tabs
-          className={styles.tabTypeSet}
-          tabBarGutter={0}
-          animated={false}
-          type="card"
-          items={tabItems}
-          activeKey={datasetType}
-          onChange={(key) => setState({ datasetType: key as DatasetType })}
-        />
-        {getTabItem(datasetType)}
-      </div>
+      {!!datasetList?.length && (
+        <div className={styles.docBox}>
+          <div className={styles.header}>{intl.get('welcome.demos')}</div>
+          <Tabs
+            className={styles.tabTypeSet}
+            tabBarGutter={0}
+            animated={false}
+            type="card"
+            items={tabItems}
+            activeKey={datasetType}
+            onChange={(key) => setState({ datasetType: key as DatasetType })}
+          />
+          {getTabItem(datasetType)}
+        </div>
+      )}
       {!!docList?.length && (
         <div className={styles.docBox} style={{ paddingBottom: '24px' }}>
           <div className={styles.header}>{intl.get('doc.learningDoc')}</div>
