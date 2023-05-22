@@ -440,9 +440,11 @@ function Welcome(props: IProps) {
                     </Button>
                   )}
 
-                  <Button className={cls(styles.action, styles.sub)} href={module.docLink} target="_blank">
-                    {intl.get('welcome.quickStartDesc')}
-                  </Button>
+                  {!!module.docLink && (
+                    <Button className={cls(styles.action, styles.sub)} href={module.docLink} target="_blank">
+                      {intl.get('welcome.quickStartDesc')}
+                    </Button>
+                  )}
                 </div>
                 {module.withOrder && <div className={styles.order}>{idx + 1}</div>}
               </div>
