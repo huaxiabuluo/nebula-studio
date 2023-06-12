@@ -1,4 +1,4 @@
-import { Button, Form, Input, Col, Row } from 'antd';
+import { Button, Form, Input, Col, Row, theme } from 'antd';
 import { useEffect, useState } from 'react';
 import { useI18n } from '@vesoft-inc/i18n';
 import { hostRulesFn, portRulesFn, passwordRulesFn, usernameRulesFn } from '@app/config/rules';
@@ -19,6 +19,7 @@ const fomrItemLayout = {
 
 const LoginPage: React.FC = () => {
   const { global } = useStore();
+  const { token } = theme.useToken();
   const { version } = global;
   const { intl } = useI18n();
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ const LoginPage: React.FC = () => {
   }, []);
   return (
     <div className={styles.studioLogin}>
-      <div className={styles.content}>
+      <div className={styles.content} style={{ backgroundColor: token.colorBgContainer }}>
         <div className={styles.header}>
           <img className={styles.logo} src={nebulaLogo} />
           <span className={styles.title}>{`${window.gConfig.databaseName} Studio`}</span>
@@ -42,7 +43,11 @@ const LoginPage: React.FC = () => {
           <FormItem noStyle>
             <span className={styles.formTitle}>{intl.get('configServer.title')}</span>
           </FormItem>
-          <Button type="link" className={styles.loginTip} onClick={() => window.open(intl.get('link.loginHref'), '_blank')}>
+          <Button
+            type="link"
+            className={styles.loginTip}
+            onClick={() => window.open(intl.get('link.loginHref'), '_blank')}
+          >
             {intl.get('configServer.tip')}
           </Button>
           <Row>

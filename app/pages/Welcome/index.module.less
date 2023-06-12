@@ -1,4 +1,5 @@
 @import '@app/common.less';
+
 .loadingWrapper {
   position: fixed;
   left: 0;
@@ -28,24 +29,24 @@
     font-size: 14px;
     padding: 0 7px;
     width: 100px;
-    background: @blue;
-    border-color: @blue;
+    // background: @blue;
+    // border-color: @blue;
     &:not(:last-child) {
       margin-right: 16px;
     }
-    &.sub {
-      background: #fff;
-      color: @blue;
-      border-color: @blue;
-      &:global(.ant-btn-disabled) {
-        color: rgba(0, 0, 0, 0.25);
-        border-color: rgba(0, 0, 0, 0.25);
-      }
-    }
+    // &.sub {
+    //   background: #fff;
+    //   color: @blue;
+    //   border-color: @blue;
+    //   &:global(.ant-btn-disabled) {
+    //     color: rgba(0, 0, 0, 0.25);
+    //     border-color: rgba(0, 0, 0, 0.25);
+    //   }
+    // }
   }
-  .link:not(:global(.ant-btn-disabled)) {
-    color: @blue;
-  }
+  // .link:not(:global(.ant-btn-disabled)) {
+  //   color: @blue;
+  // }
   .disabledAction {
     margin-right: 16px;
     
@@ -80,12 +81,12 @@
         width: 10px;
         height: 10px;
         border-radius: 10px;
-        background-color: #E0E0E0;
+        // background-color: #E0E0E0;
       }
     
       li.slick-active button {
         width: 10px;
-        background-color: @blue;
+        // background-color: @blue;
       }
     }
   }
@@ -110,7 +111,6 @@
     font-size: 64px;
     height: 120px;
     line-height: 120px;
-    color: #000000;
     text-align: center;
     margin-bottom: 0;
     > span {
@@ -150,7 +150,6 @@
       flex-direction: column;
       align-items: flex-start;
       font-family: Roboto-Regular, sans-serif;
-      background-color: #fff;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
       border-radius: 6px;
       & :global(.anticon > svg) {
@@ -185,7 +184,6 @@
         font-weight: 300;
         font-size: 12px;
         line-height: 1.5;
-        color: #4F4F4F;
         padding-right: 5px;
       }
       .order {
@@ -227,7 +225,7 @@
           font-style: normal;
           font-weight: 500;
           font-size: 20px;
-          color: #000;
+          // color: #000;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -235,7 +233,6 @@
         .contentDescription {
           font-weight: 300;
           font-size: 14px;
-          color: #4F4F4F;
           flex: 1 1 auto;
           .descInner {
             overflow: hidden;
@@ -245,7 +242,6 @@
           }
         }
         .infoWrapper {
-          color: #4f4f4f;
           font-size: 12px;
           & > span:not(:last-child) {
             margin-right: 10px;
@@ -272,7 +268,7 @@
     padding: 14px;
     .docItem {
       height: 295px;
-      background: #FFFFFF;
+      // background: #FFFFFF;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
       padding: 30px 20px 15px 20px;
       display: flex;
@@ -290,7 +286,6 @@
     .docTip {
       font-weight: 300;
       font-size: 14px;
-      color: #4F4F4F;
     }
     :global(.ant-btn-block) {
       background-color: @blue;
@@ -310,7 +305,7 @@
   }
 
   &:global(.ant-tabs > .ant-tabs-nav) {
-    background-color: #e9edef;
+    // background-color: #e9edef;
     border-radius: 18px;
     padding: 4px;
     margin: 12px 16px;

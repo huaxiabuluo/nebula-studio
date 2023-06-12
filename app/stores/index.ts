@@ -8,14 +8,26 @@ import graphInstances from './graphInstances';
 import sketchModel from './sketchModel';
 import welcome from './welcome';
 import datasource from './datasource';
+import theme from './theme';
 
-const rootStore = { global, files, console, dataImport, schema, graphInstances, sketchModel, welcome, datasource };
+const rootStore = {
+  global,
+  files,
+  console,
+  dataImport,
+  schema,
+  graphInstances,
+  sketchModel,
+  welcome,
+  datasource,
+  theme,
+};
 const rootStoreRef = { current: rootStore };
 // @ts-ignore
 window.studioStore = rootStore;
 export const getRootStore = () => rootStoreRef.current;
 export const resetStore = () => {
-  Object.keys(rootStore).forEach(key => {
+  Object.keys(rootStore).forEach((key) => {
     const module = rootStore[key];
     module.resetModel && module.resetModel();
   });

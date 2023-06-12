@@ -1,6 +1,21 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { Button, Carousel, Checkbox, Col, message, Modal, Progress, Row, Tabs, TabsProps, Tag, Tooltip } from 'antd';
+import {
+  Button,
+  Carousel,
+  Checkbox,
+  Col,
+  message,
+  Modal,
+  Progress,
+  Row,
+  Tabs,
+  TabsProps,
+  Tag,
+  theme,
+  Tooltip,
+} from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { css } from '@emotion/css';
 import { useI18n, getI18n } from '@vesoft-inc/i18n';
 import { observer } from 'mobx-react-lite';
 import debounce from 'lodash/debounce';
@@ -258,14 +273,19 @@ function Welcome(props: IProps) {
     onClosePage,
   } = props;
   const history = useHistory() as History;
-  const { welcome } = useStore();
+  const {
+    welcome,
+    theme: { variables },
+  } = useStore();
   const { intl } = useI18n();
+  const { token } = theme.useToken();
   const { spaceLoading, setSpaceLoading, clearSpaceLoadingTimeout } = welcome;
   const { state, setState } = useBatchState({
     datasetType: 'starter' as DatasetType,
     actionShow: shouldAlwaysShowWelcome(),
   });
   const { datasetType, actionShow } = state;
+  const { subInfoStyle, tabWithGreyBgStyle } = variables;
 
   const tabItems: TabsProps['items'] = [
     {
@@ -305,7 +325,10 @@ function Welcome(props: IProps) {
       const gql = await fetch(`${process.env.CDN_PATH || '/'}datasets/${space.fileName}.ngql`).then((r) => r.text());
       setSpaceLoading({ spaceName: space.spaceName, leftTime: initLoadingTime, progressModalOpen: true });
       const downloadRes = await service.batchExecNGQL({
-        gqls: gql.split('\n').map(line => line.startsWith(':') ? line.replace(/;$/gm, '') : line).filter(Boolean)
+        gqls: gql
+          .split('\n')
+          .map((line) => (line.startsWith(':') ? line.replace(/;$/gm, '') : line))
+          .filter(Boolean),
       });
       setSpaceLoading({ spaceName: undefined, leftTime: 0, progressModalOpen: false });
       clearSpaceLoadingTimeout();
@@ -340,7 +363,10 @@ function Welcome(props: IProps) {
         .filter((i) => i.type === datasetType)
         .map((dataset) => (
           <Col span={8} key={dataset.spaceName}>
-            <div className={cls(styles.moduleItem, styles.withCover)}>
+            <div
+              className={cls(styles.moduleItem, styles.withCover)}
+              style={{ backgroundColor: token.colorBgContainer }}
+            >
               <div className={styles.cover} style={{ backgroundImage: `url(${dataset.coverImg})` }} />
               <div className={styles.withCoverContent}>
                 <div className={styles.contentHeader}>
@@ -349,7 +375,7 @@ function Welcome(props: IProps) {
                       <Tag key={tag}>{tag}</Tag>
                     ))}
                   </div>
-                  <div className={styles.infoWrapper}>
+                  <div className={styles.infoWrapper} style={subInfoStyle}>
                     <span>
                       {`${intl.get('import.edgeText')}: `}
                       <strong>{dataset.detail.edgeCount}</strong>
@@ -361,7 +387,7 @@ function Welcome(props: IProps) {
                   </div>
                 </div>
                 <div className={styles.contentTitle}>{dataset.spaceName}</div>
-                <div className={styles.contentDescription}>
+                <div className={styles.contentDescription} style={subInfoStyle}>
                   <span className={styles.descInner}>{dataset.description}</span>
                 </div>
                 <div className={styles.contentFooter}>
@@ -370,6 +396,7 @@ function Welcome(props: IProps) {
                       className={cls(styles.action, styles.sub)}
                       onClick={() => downloadDemo(dataset)}
                       disabled={!!spaceLoading.spaceName}
+                      style={{ color: token.colorPrimary, borderColor: token.colorPrimary }}
                     >
                       {intl.get('welcome.demoDownload')}
                     </Button>
@@ -390,6 +417,10 @@ function Welcome(props: IProps) {
         ))}
     </Row>
   );
+
+  const tabNavCls = css({
+    '&.ant-tabs > .ant-tabs-nav': tabWithGreyBgStyle,
+  });
 
   // @ts-ignore
   const percent = (((initLoadingTime - spaceLoading?.leftTime) / initLoadingTime) * 100) | 0;
@@ -413,10 +444,12 @@ function Welcome(props: IProps) {
         <Row className={styles.moduleIntro} gutter={[26, 26]}>
           {moduleList.map((module, idx) => (
             <Col span={8} key={module.title}>
-              <div className={styles.moduleItem}>
-                <Icon type={module.icon} />
+              <div className={styles.moduleItem} style={{ backgroundColor: token.colorBgContainer }}>
+                <Icon type={module.icon} style={{ color: token.colorPrimary }} />
                 <span className={cls(styles.title, module.beta && styles.beta)}>{module.title}</span>
-                <span className={styles.tip}>{module.tip}</span>
+                <span className={styles.tip} style={subInfoStyle}>
+                  {module.tip}
+                </span>
                 <div className={styles.actionWrapper}>
                   {module.disabledTip ? (
                     <Tooltip title={module.disabledTip}>
@@ -440,7 +473,12 @@ function Welcome(props: IProps) {
                     </Button>
                   )}
 
-                  <Button className={cls(styles.action, styles.sub)} href={module.docLink} target="_blank">
+                  <Button
+                    className={cls(styles.action, styles.sub)}
+                    href={module.docLink}
+                    target="_blank"
+                    style={{ color: token.colorPrimary, borderColor: token.colorPrimary }}
+                  >
                     {intl.get('welcome.quickStartDesc')}
                   </Button>
                 </div>
@@ -454,7 +492,7 @@ function Welcome(props: IProps) {
         <div className={styles.docBox}>
           <div className={styles.header}>{intl.get('welcome.demos')}</div>
           <Tabs
-            className={styles.tabTypeSet}
+            className={cls(styles.tabTypeSet, tabNavCls)}
             tabBarGutter={0}
             animated={false}
             type="card"
@@ -474,10 +512,12 @@ function Welcome(props: IProps) {
                 <Row className={styles.docGroup} gutter={26}>
                   {group.map((doc) => (
                     <Col span={8} key={doc.title}>
-                      <div className={styles.docItem}>
+                      <div className={styles.docItem} style={{ backgroundColor: token.colorBgContainer }}>
                         <div className={styles.docDesc}>
                           <p className={styles.docTitle}>{doc.title}</p>
-                          <p className={styles.docTip}>{doc.tip}</p>
+                          <p className={styles.docTip} style={subInfoStyle}>
+                            {doc.tip}
+                          </p>
                         </div>
                         <Button type="primary" block>
                           <a href={doc.link} target="_blank" rel="noreferrer">

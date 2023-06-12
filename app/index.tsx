@@ -1,7 +1,7 @@
-import { Spin, message, ConfigProvider } from 'antd';
+import { Spin, message, ConfigProvider, theme } from 'antd';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
-import { Suspense, lazy, useEffect } from 'react';
+import { PropsWithChildren, Suspense, lazy, useEffect } from 'react';
 import ReactDom from 'react-dom';
 import { Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -50,10 +50,15 @@ const PageRoot = observer(() => {
   );
 });
 
-const App = () => {
+const App = observer(() => {
   const history = useHistory();
   const { currentLocale } = useI18n();
-  rootStore.global.history = history;
+  const {
+    global,
+    theme: { algorithm, token, components },
+  } = useStore();
+
+  global.history = history;
 
   useEffect(() => {
     dayjs.locale(currentLocale === 'EN_US' ? 'en' : 'zh-cn');
@@ -63,28 +68,26 @@ const App = () => {
     <ConfigProvider
       locale={currentLocale === 'EN_US' ? enUS : zhCN}
       theme={{
-        token: {
-          controlHeight: 38,
-          colorPrimary: '#0091ff',
-          fontFamily: 'Robot-Regular, sans-serif',
-        },
-        components: {
-          Menu: {
-            colorItemBg: '#2f3a4a',
-            colorPrimary: '#2f80ed',
-            margin: 20,
-          },
-        },
+        algorithm,
+        token,
+        components,
       }}
     >
       <Switch>
         <Suspense fallback={<Spin />}>
-          <Route path="/login" exact={true} component={Login} />
-          <AuthorizedRoute component={MainPage} />
+          <StyleWrapper>
+            <Route path="/login" exact={true} component={Login} />
+            <AuthorizedRoute component={MainPage} />
+          </StyleWrapper>
         </Suspense>
       </Switch>
     </ConfigProvider>
   );
-};
+});
+
+const StyleWrapper = observer((props: PropsWithChildren<{}>) => {
+  const { token } = theme.useToken();
+  return <div style={{ color: token.colorText }}>{props.children}</div>;
+});
 
 ReactDom.render(<PageRoot />, document.getElementById('studioApp'));
