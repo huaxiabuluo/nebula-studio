@@ -14,6 +14,7 @@ import { INTL_LOCALES } from '@app/config/constants';
 import { useStore } from '@app/stores';
 import AuthorizedRoute from './AuthorizedRoute';
 import rootStore, { StoreProvider } from './stores';
+import { genGlobalStyle } from './style';
 
 import 'dayjs/locale/zh-cn';
 import 'antd/dist/reset.css';
@@ -87,7 +88,13 @@ const App = observer(() => {
 
 const StyleWrapper = observer((props: PropsWithChildren<{}>) => {
   const { token } = theme.useToken();
-  return <div style={{ color: token.colorText }}>{props.children}</div>;
+  const { variables } = useStore().theme;
+  const globalStyle = genGlobalStyle(variables.common);
+  return (
+    <div style={{ color: token.colorText }} className={globalStyle}>
+      {props.children}
+    </div>
+  );
 });
 
 ReactDom.render(<PageRoot />, document.getElementById('studioApp'));
