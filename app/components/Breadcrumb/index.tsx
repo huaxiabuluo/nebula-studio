@@ -18,13 +18,15 @@ const itemRender = (route, _params, routes, _paths) => {
   const first = routes.indexOf(route) === 0;
   return final ? (
     <span>{route.breadcrumbName}</span>
-  ) : first ? <> 
-    <Link to={routes[routes.length - 2].path}><Icon className={styles.arrowIcon} type="icon-studio-btn-return" /></Link>
+  ) : first ? (
+    <>
+      <Link to={routes[routes.length - 2].path}>
+        <Icon className={styles.arrowIcon} type="icon-studio-btn-return" />
+      </Link>
+      <Link to={route.path}>{route.breadcrumbName}</Link>
+    </>
+  ) : (
     <Link to={route.path}>{route.breadcrumbName}</Link>
-  </> : (
-    <Link to={route.path}>
-      {route.breadcrumbName}
-    </Link>
   );
 };
 
@@ -35,14 +37,12 @@ const NebulaBreadcrumb: React.FC<IProps> = (props: IProps) => {
       title={null}
       className={styles.studioBreadcrumb}
       breadcrumbRender={() => {
-        return <div className={cls(styles.breadcrumbContainer, 'studioCenterLayout')}>
-          <Breadcrumb
-            className={styles.breadcrumb}
-            routes={routes} 
-            itemRender={itemRender} 
-          />
-          {extraNode}
-        </div>;
+        return (
+          <div className={cls(styles.breadcrumbContainer, 'studioCenterLayout')}>
+            <Breadcrumb className={styles.breadcrumb} items={routes} itemRender={itemRender} />
+            {extraNode}
+          </div>
+        );
       }}
     />
   );

@@ -15,11 +15,13 @@ export class ThemeStore {
   #darkVariables = {
     subInfoStyle: { color: '#bdbdbd' },
     tabWithGreyBgStyle: { backgroundColor: '#24282b' },
+    schemaTableRowStyle: { boxShadow: '0px 2px 10px rgb(255 255 255 / 24%)' },
   };
 
   #lightVariables = {
     subInfoStyle: { color: '#4f4f4f' },
     tabWithGreyBgStyle: { backgroundColor: '#e9edef' },
+    schemaTableRowStyle: { boxShadow: '0px 2px 10px rgb(0 0 0 / 10%)' },
   };
 
   get variables() {

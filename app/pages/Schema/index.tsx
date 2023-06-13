@@ -10,10 +10,11 @@ import { Link, useHistory } from 'react-router-dom';
 import styles from './index.module.less';
 import Search from './SchemaConfig/List/Search';
 import DDLButton from './SchemaConfig/DDLButton';
+import { css } from '@emotion/css';
 
 interface IOperations {
   space: string;
-  onClone: (name: string, oldSpace: string) => void
+  onClone: (name: string, oldSpace: string) => void;
   onDelete: (name: string) => void;
 }
 
@@ -29,58 +30,72 @@ const Operations = (props: IOperations) => {
   const items = [
     {
       key: 'ddl',
-      label: <DDLButton space={space} />
+      label: <DDLButton space={space} />,
     },
     {
       key: 'clone',
-      label: <Popover
-        overlayClassName={styles.clonePopover}
-        destroyTooltipOnHide={true}
-        placement="leftTop"
-        open={visible}
-        trigger="click"
-        onOpenChange={visible => setVisible(visible)}
-        content={<Form onFinish={handleClone} layout="inline">
-          <Form.Item label={intl.get('schema.spaceName')} name="name" rules={[{ required: true, message: intl.get('formRules.nameRequired') }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button htmlType="submit" type="primary">
-              {intl.get('common.confirm')}
-            </Button>
-          </Form.Item>
-        </Form>}
-      >
-        <Button type="link" onClick={() => setVisible(true)}>
-          {intl.get('schema.cloneSpace')}
-        </Button>
-      </Popover>
+      label: (
+        <Popover
+          overlayClassName={styles.clonePopover}
+          destroyTooltipOnHide={true}
+          placement="leftTop"
+          open={visible}
+          trigger="click"
+          onOpenChange={(visible) => setVisible(visible)}
+          content={
+            <Form onFinish={handleClone} layout="inline">
+              <Form.Item
+                label={intl.get('schema.spaceName')}
+                name="name"
+                rules={[{ required: true, message: intl.get('formRules.nameRequired') }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item>
+                <Button htmlType="submit" type="primary">
+                  {intl.get('common.confirm')}
+                </Button>
+              </Form.Item>
+            </Form>
+          }
+        >
+          <Button type="link" onClick={() => setVisible(true)}>
+            {intl.get('schema.cloneSpace')}
+          </Button>
+        </Popover>
+      ),
     },
     {
       key: 'delete',
-      label: <Popconfirm
-        onConfirm={() => onDelete(space)}
-        title={intl.get('common.ask')}
-        okText={intl.get('common.ok')}
-        cancelText={intl.get('common.cancel')}
-      >
-        <Button type="link" danger>
-          {intl.get('schema.deleteSpace')}
-        </Button>
-      </Popconfirm>
+      label: (
+        <Popconfirm
+          onConfirm={() => onDelete(space)}
+          title={intl.get('common.ask')}
+          okText={intl.get('common.ok')}
+          cancelText={intl.get('common.cancel')}
+        >
+          <Button type="link" danger>
+            {intl.get('schema.deleteSpace')}
+          </Button>
+        </Popconfirm>
+      ),
     },
   ];
   return <Menu className={styles.operationsSpace} items={items} />;
 };
 
 const Schema = () => {
-  const { schema } = useStore();
+  const { schema, theme } = useStore();
   const [loading, setLoading] = useState(false);
   const [searchVal, setSearchVal] = useState('');
   const history = useHistory();
   const { intl } = useI18n();
   const { currentSpace, switchSpace, getSpacesList, deleteSpace, spaceList, cloneSpace } = schema;
-  const activeSpace = location.hash.slice(1);
+  const { schemaTableRowStyle } = theme.variables;
+  const tableStyleCls = css({
+    [`&.${styles.tableSpaceList} .ant-table-row`]: schemaTableRowStyle,
+  });
+
   useEffect(() => {
     trackPageView('/schema');
     getSpaces();
@@ -95,7 +110,7 @@ const Schema = () => {
       await getSpaces();
       if (currentSpace === name) {
         schema.update({
-          currentSpace: ''
+          currentSpace: '',
         });
         localStorage.removeItem('currentSpace');
       }
@@ -106,6 +121,7 @@ const Schema = () => {
     const ok = await switchSpace(space);
     ok && history.push(`/schema/tag/list`);
   }, []);
+
   const getSpaces = useCallback(async () => {
     setLoading(true);
     await getSpacesList();
@@ -114,11 +130,12 @@ const Schema = () => {
 
   const handleCloneSpace = useCallback(async (name: string, oldSpace: string) => {
     const { code } = await cloneSpace(name, oldSpace);
-    if(code === 0) {
+    if (code === 0) {
       message.success(intl.get('schema.createSuccess'));
       getSpaces();
     }
   }, []);
+
   const columns = [
     {
       title: intl.get('schema.No'),
@@ -132,7 +149,7 @@ const Schema = () => {
       ellipsis: {
         showTitle: false,
       },
-      render: data => (
+      render: (data) => (
         <Tooltip placement="topLeft" title={data}>
           <a
             className={styles.cellBtn}
@@ -177,7 +194,7 @@ const Schema = () => {
       ellipsis: {
         showTitle: false,
       },
-      render: data => (
+      render: (data) => (
         <Tooltip placement="topLeft" title={data}>
           {data}
         </Tooltip>
@@ -200,7 +217,10 @@ const Schema = () => {
               >
                 {intl.get('common.schema')}
               </Button>
-              <Dropdown overlay={<Operations space={space.Name} onDelete={handleDeleteSpace} onClone={handleCloneSpace} />} placement="bottomLeft">
+              <Dropdown
+                overlay={<Operations space={space.Name} onDelete={handleDeleteSpace} onClone={handleCloneSpace} />}
+                placement="bottomLeft"
+              >
                 <Icon className={styles.btnMore} type="icon-studio-more" />
               </Dropdown>
             </div>
@@ -209,35 +229,39 @@ const Schema = () => {
       },
     },
   ];
-  const data = useMemo(() => spaceList.filter(item => item.Name.includes(searchVal)), [spaceList, searchVal]);
-  return <div className={cls(styles.schemaPage, 'studioCenterLayout')}>
-    <div className={styles.schemaHeader}>
-      {intl.get('schema.spaceList')}
-    </div>
-    <div className={styles.schemaContainer}>
-      <div className={styles.row}>
-        <Button className={cls(styles.btnCreate, 'studioAddBtn')} type="primary">
-          <Link
-            to="/schema/space/create"
-            data-track-category="navigation"
-            data-track-action="view_space_create"
-            data-track-label="from_space_list"
-          >
-            <Icon className="studioAddBtnIcon" type="icon-studio-btn-add" />{intl.get('schema.createSpace')}
-          </Link>
-        </Button>
-        <Search type={intl.get('common.space')} onSearch={setSearchVal} />
+
+  const data = useMemo(() => spaceList.filter((item) => item.Name.includes(searchVal)), [spaceList, searchVal]);
+  const activeSpace = location.hash.slice(1);
+
+  return (
+    <div className={cls(styles.schemaPage, 'studioCenterLayout')}>
+      <div className={styles.schemaHeader}>{intl.get('schema.spaceList')}</div>
+      <div className={styles.schemaContainer}>
+        <div className={styles.row}>
+          <Button className={cls(styles.btnCreate, 'studioAddBtn')} type="primary">
+            <Link
+              to="/schema/space/create"
+              data-track-category="navigation"
+              data-track-action="view_space_create"
+              data-track-label="from_space_list"
+            >
+              <Icon className="studioAddBtnIcon" type="icon-studio-btn-add" />
+              {intl.get('schema.createSpace')}
+            </Link>
+          </Button>
+          <Search type={intl.get('common.space')} onSearch={setSearchVal} />
+        </div>
+        <Table
+          className={cls(styles.tableSpaceList, tableStyleCls)}
+          dataSource={data}
+          columns={columns}
+          loading={!!loading}
+          rowKey="ID"
+          rowClassName={(item) => (item.Name === activeSpace ? styles.active : '')}
+        />
       </div>
-      <Table
-        className={styles.tableSpaceList}
-        dataSource={data}
-        columns={columns}
-        loading={!!loading}
-        rowKey="ID"
-        rowClassName={(item) => item.Name === activeSpace ? styles.active : ''}
-      />
     </div>
-  </div>;
+  );
 };
 
 export default observer(Schema);
